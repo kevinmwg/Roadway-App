@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="selected_icon_color">#FF5722</color> <!-- Example selected color (e.g., orange) -->
+    <color name="unselected_icon_color">#757575</color> <!-- Example unselected color (e.g., gray) -->
+    <color name="selected_text_color">#FF5722</color> <!-- Example selected text color (e.g., orange) -->
+    <color name="unselected_text_color">#757575</color> <!-- Example unselected text color (e.g., gray) -->
+    <color name="chelsea_blue">#034694</color>
+    <!-- colors.xml -->
+
+    <color name="backgroundColor">#F3F4F6</color> <!-- Light gray for the background, soft on the eyes -->
+    <color name="cardBackground">#FFFFFF</color> <!-- White for the card background, makes it stand out on light gray -->
+    <color name="textPrimary">#1A1A1A</color> <!-- Dark gray for main text, high contrast and easy to read -->
+    <color name="textSecondary">#6B7280</color> <!-- Muted gray for secondary text, subtle but visible -->
+</resources>

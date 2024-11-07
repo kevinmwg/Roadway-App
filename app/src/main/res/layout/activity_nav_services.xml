@@ -1,0 +1,119 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/backgroundColor">
+
+    <!-- Profile Card at the Top -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/profile_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="24dp"
+        app:cardElevation="6dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="@color/cardBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_operator_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Operator's Name"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/textPrimary"/>
+
+            <TextView
+                android:id="@+id/tv_contact_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contact Details: example@mail.com"
+                android:textSize="16sp"
+                android:textColor="@color/textSecondary"/>
+
+            <TextView
+                android:id="@+id/tv_service_offered"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Services Offered: Towing, Flatbed Recovery"
+                android:textSize="16sp"
+                android:textColor="@color/textSecondary"/>
+
+            <TextView
+                android:id="@+id/tv_vehicle_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vehicle Location: Nairobi"
+                android:textSize="16sp"
+                android:textColor="@color/textSecondary"/>
+
+            <TextView
+                android:id="@+id/tv_phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone Number: +254 712 345 678"
+                android:textSize="16sp"
+                android:textColor="@color/textSecondary"/>
+
+            <Button
+                android:id="@+id/btn_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                android:layout_gravity="end"
+                android:backgroundTint="@color/chelsea_blue"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Floating Buttons Row -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp"
+        android:gravity="center">
+
+        <!-- Floating Button for Registration -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/baseline_app_registration_24"
+            app:backgroundTint="@color/chelsea_blue"/>
+
+        <!-- Floating Button for Donations -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_donate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/baseline_approval_24"
+            app:backgroundTint="@color/chelsea_blue"/>
+
+        <!-- Floating Button for Discounts and Promotions -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_promotions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_campaign_24"
+            app:backgroundTint="@color/chelsea_blue"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+
+

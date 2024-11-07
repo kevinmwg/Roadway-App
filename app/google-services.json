@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "781913799099",
+    "firebase_url": "https://roadwayridershub-default-rtdb.firebaseio.com",
+    "project_id": "roadwayridershub",
+    "storage_bucket": "roadwayridershub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781913799099:android:279fb3d4723bc4a33eec9e",
+        "android_client_info": {
+          "package_name": "com.example.performancetrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781913799099-gs6jgq7ib2ondl2q2l48ejrar7968frn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCADO15lrOnpjLTOx6NuPna4UNiTeXUo4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781913799099-gs6jgq7ib2ondl2q2l48ejrar7968frn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781913799099:android:3d2c766eb7a66a5a3eec9e",
+        "android_client_info": {
+          "package_name": "com.glalintechnologies.roadway"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781913799099-gs6jgq7ib2ondl2q2l48ejrar7968frn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCADO15lrOnpjLTOx6NuPna4UNiTeXUo4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781913799099-gs6jgq7ib2ondl2q2l48ejrar7968frn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

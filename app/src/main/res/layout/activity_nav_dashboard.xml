@@ -1,0 +1,198 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#F0F0F0">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button_towing_recovery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Towing Recovery"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_flatbed_recovery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Flatbed Recovery"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_heavy_duty_recovery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Heavy Duty Recovery"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_tipper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tipper"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_grab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Grab"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_volumetric"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Volumetric"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_hook_loader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hook Loader"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_excavator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Excavator"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_grader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Grader"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_skid_steer_loader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Skid-Steer Loader"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_backhoe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Backhoe"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_forklift"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Forklift"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_trencher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Trencher"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_concrete_mixer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Concrete Mixer"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_pickup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pick-up"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_caterpillar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Caterpillar"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_refrigerator_truck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Refrigerator Truck"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_mover_truck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mover Truck"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_clean_water_truck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clean Water Truck"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_tractor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tractor"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_ambulance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ambulance"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_firefighter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Firefighter"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_waste_truck_manager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Waste Truck Manager"
+            android:backgroundTint="@color/chelsea_blue"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+</ScrollView>

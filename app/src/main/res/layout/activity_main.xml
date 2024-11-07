@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Google MapView -->
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:mapType="normal"
+        app:uiZoomControls="true"
+        app:uiCompass="true"
+        app:uiRotateGestures="true"
+        app:uiScrollGestures="true" />
+
+    <!-- Toggle Switch for Location Service -->
+    <Switch
+        android:id="@+id/locationToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="operator is active"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"/>
+
+    <!-- Bottom Navigation Bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_navigation_menu"
+        app:itemIconTint="@color/nav_icon_tint"
+        app:itemTextColor="@color/nav_text_color"
+        app:labelVisibilityMode="labeled"
+        android:background="?android:attr/windowBackground" />
+
+</RelativeLayout>
+

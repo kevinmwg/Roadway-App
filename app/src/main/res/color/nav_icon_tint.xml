@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Color for the selected state -->
+    <item android:color="@color/selected_icon_color" android:state_selected="true"/>
+    <!-- Color for the default (unselected) state -->
+    <item android:color="@color/unselected_icon_color" android:state_selected="false"/>
+</selector>
