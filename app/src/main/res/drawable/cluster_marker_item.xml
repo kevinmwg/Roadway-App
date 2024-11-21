@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="8dp"
+    android:background="@color/white">
+
+    <!-- Marker Icon -->
+    <ImageView
+        android:id="@+id/marker_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/marker_icon"
+        android:contentDescription="@string/marker_icon_desc" />
+
+    <!-- Marker Title (Operator Name) -->
+    <TextView
+        android:id="@+id/marker_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:paddingTop="4dp"
+        android:gravity="center"
+        android:text="Operator Name" />
+
+    <!-- Marker Snippet (Operator Description) -->
+    <TextView
+        android:id="@+id/marker_snippet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:paddingTop="2dp"
+        android:gravity="center"
+        android:text="Operator Description" />
+</LinearLayout>

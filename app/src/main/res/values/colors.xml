@@ -7,6 +7,7 @@
     <color name="selected_text_color">#FF5722</color> <!-- Example selected text color (e.g., orange) -->
     <color name="unselected_text_color">#757575</color> <!-- Example unselected text color (e.g., gray) -->
     <color name="chelsea_blue">#034694</color>
+    <color name="blue">#4D2196F3</color>
     <!-- colors.xml -->
 
     <color name="backgroundColor">#F3F4F6</color> <!-- Light gray for the background, soft on the eyes -->

@@ -10,8 +10,6 @@
 
 
 
-
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -33,6 +31,8 @@
         <activity
             android:name=".nav_dashboard"
             android:exported="false" />
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -41,14 +41,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Service for Location Tracking -->
-        <service
-            android:name=".LocationService"
-            android:exported="false"
-            android:foregroundServiceType="location"
-            tools:ignore="ForegroundServicePermission" />
-
 
 
         <!-- Google Maps API Key -->

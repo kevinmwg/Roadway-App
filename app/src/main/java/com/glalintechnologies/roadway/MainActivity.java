@@ -1,70 +1,75 @@
 package com.glalintechnologies.roadway;
 
 import android.Manifest;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.widget.Switch;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final int LOCATION_PERMISSION_REQUEST = 1001;
+
     private MapView mapView;
-    private GoogleMap googleMap;
     private Switch locationToggle;
-    private boolean isServiceRunning = false;
-    private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private GoogleMap googleMap;
+    private FusedLocationProviderClient fusedLocationClient;
+    private DatabaseReference databaseReference;
+    private GeoFire geoFire;
+    private Marker currentLocationMarker;
+
+    private static final String OPERATOR_ID = "operator_123"; // Replace with dynamic ID if needed
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize MapView
+        // Firebase Realtime Database Reference
+        databaseReference = FirebaseDatabase.getInstance().getReference("operators_locations");
+        geoFire = new GeoFire(databaseReference);
+
+        // Initialize views
         mapView = findViewById(R.id.mapView);
-        Bundle mapViewBundle = null;
-        if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
-        }
-        mapView.onCreate(mapViewBundle);
+        locationToggle = findViewById(R.id.locationToggle);
+
+        // Initialize location client
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // MapView setup
+        mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        // Initialize Location Toggle Switch
-        locationToggle = findViewById(R.id.locationToggle);
-        locationToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST_CODE);
-            } else {
-                toggleLocationService();
-            }
-        });
-
-        // Initialize BottomNavigationView and set item selected listener
+        // Initialize BottomNavigationView and set listener
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             Intent intent = null;
             if (item.getItemId() == R.id.nav_home) {
-                return true;
+                return true; // Stay on the current activity
             } else if (item.getItemId() == R.id.nav_dashboard) {
-                intent = new Intent(MainActivity.this, nav_dashboard.class);
+                intent = new Intent(MainActivity.this, nav_dashboard.class); // Replace with your dashboard activity
             } else if (item.getItemId() == R.id.nav_services) {
-                intent = new Intent(MainActivity.this, nav_services.class);
+                intent = new Intent(MainActivity.this, nav_services.class); // Replace with your services activity
             }
             if (intent != null) {
                 startActivity(intent);
@@ -72,67 +77,134 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             return false;
         });
+
+        // Show user type selection dialog
+        showUserTypeDialog();
+
+        // Toggle listener for location sharing
+        locationToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                startLocationSharing();
+            } else {
+                stopLocationSharing();
+            }
+        });
     }
 
-    private void toggleLocationService() {
-        Intent serviceIntent = new Intent(this, LocationService.class);
-        if (isServiceRunning) {
-            stopService(serviceIntent);
-            showSnackbar("Operator is inactive");
-        } else {
-            ContextCompat.startForegroundService(this, serviceIntent);
-            showSnackbar("Operator is active");
+    private void showUserTypeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select User Type");
+        builder.setMessage("Are you a Client, a New Operator, or an Existing Operator?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Client", (dialog, which) -> {
+            // Redirect to Dashboard
+            Intent intent = new Intent(MainActivity.this, nav_dashboard.class);
+            startActivity(intent);
+            finish();
+        });
+        builder.setNegativeButton("New Operator", (dialog, which) -> {
+            // Redirect to Registration Form
+            Intent intent = new Intent(MainActivity.this, OperatorsregistrationActivity.class); // Replace with your registration activity
+            startActivity(intent);
+            finish();
+        });
+        builder.setNeutralButton("Existing Operator", (dialog, which) -> {
+            // Stay in current activity
+            Toast.makeText(MainActivity.this, "Please enable location sharing to proceed.", Toast.LENGTH_SHORT).show();
+        });
+        builder.show();
+    }
+
+    private void startLocationSharing() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST);
+            return;
         }
-        isServiceRunning = !isServiceRunning;
+
+        // Get location updates and save to Firebase
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, this::updateLocation);
+    }
+
+    private void updateLocation(Location location) {
+        if (location != null) {
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+            // Update marker on map
+            if (currentLocationMarker != null) {
+                currentLocationMarker.remove();
+            }
+            currentLocationMarker = googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title("Operator Location"));
+            googleMap.moveCamera(com.google.android.gms.maps.CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+            // Update location in Firebase using GeoFire
+            geoFire.setLocation(OPERATOR_ID, new GeoLocation(location.getLatitude(), location.getLongitude()), (key, error) -> {
+                if (error != null) {
+                    Toast.makeText(MainActivity.this, "Error saving location: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Location shared successfully", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "Unable to fetch location. Try again.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void stopLocationSharing() {
+        // Remove location from Firebase
+        geoFire.removeLocation(OPERATOR_ID, (key, error) -> {
+            if (error != null) {
+                Toast.makeText(MainActivity.this, "Error removing location: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Location sharing stopped", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Remove marker from map
+        if (currentLocationMarker != null) {
+            currentLocationMarker.remove();
+            currentLocationMarker = null;
+        }
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         googleMap = map;
-        LatLng defaultLocation = new LatLng(-1.286389, 36.817223); // Nairobi, Kenya
-        googleMap.addMarker(new MarkerOptions().position(defaultLocation).title("Marker in Nairobi"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                toggleLocationService();
-            } else {
-                locationToggle.setChecked(false);
-                showSnackbar("Location permission is required to track location.");
-            }
+        if (requestCode == LOCATION_PERMISSION_REQUEST && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startLocationSharing();
+        } else {
+            Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
         }
     }
-
-    private void showSnackbar(String message) {
-        Snackbar.make(findViewById(R.id.mapView), message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    // MapView lifecycle methods
-    @Override
-    protected void onResume() { super.onResume(); mapView.onResume(); }
-    @Override
-    protected void onStart() { super.onStart(); mapView.onStart(); }
-    @Override
-    protected void onStop() { super.onStop(); mapView.onStop(); }
-    @Override
-    protected void onPause() { mapView.onPause(); super.onPause(); }
-    @Override
-    protected void onDestroy() { mapView.onDestroy(); super.onDestroy(); }
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
-        if (mapViewBundle == null) {
-            mapViewBundle = new Bundle();
-            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
-        }
-        mapView.onSaveInstanceState(mapViewBundle);
-    }
-    @Override
-    public void onLowMemory() { super.onLowMemory(); mapView.onLowMemory(); }
 }
+
+
+
+
 

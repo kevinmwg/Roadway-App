@@ -1,20 +1,25 @@
 package com.glalintechnologies.roadway;
 
-import android.Manifest;
-import android.app.Notification;
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -25,86 +30,106 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class LocationService extends Service {
 
-    public static final String ACTION_START = "com.glalintechnologies.roadway.LocationService.START";
-    public static final String ACTION_STOP = "com.glalintechnologies.roadway.LocationService.STOP";
-    private static final long LOCATION_UPDATE_INTERVAL = 10000; // 10 seconds
-    private static final String CHANNEL_ID = "location_channel";
-
-    private FusedLocationProviderClient locationProviderClient;
+    private static final String TAG = "LocationService";
+    private static final String CHANNEL_ID = "LocationServiceChannel";
+    private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
-    private DatabaseReference databaseReference;
-    private String operatorId;
+    private GeoFire geoFire;
+    private DatabaseReference geoFireRef;
 
+    @SuppressLint("ForegroundServiceType")
     @Override
     public void onCreate() {
         super.onCreate();
 
-        // Initialize Firebase Database reference
-        databaseReference = FirebaseDatabase.getInstance().getReference("operators");
-        operatorId = "your_unique_operator_id"; // Set this to a fixed ID or retrieve it dynamically
+        // Initialize Firebase Realtime Database reference for GeoFire
+        geoFireRef = FirebaseDatabase.getInstance().getReference("geolocations");
+        geoFire = new GeoFire(geoFireRef);
 
-        // Set up location client and callback
-        locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        // Set up location client and request
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        LocationRequest locationRequest = LocationRequest.create()
+                .setInterval(5000)  // 5 seconds interval
+                .setFastestInterval(3000) // 3 seconds fastest interval
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // Define location callback to receive location updates
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
-                Location location = locationResult.getLastLocation();
-                if (location != null) {
-                    updateLocationInDatabase(location.getLatitude(), location.getLongitude());
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+                        updateLocationToGeoFire(location);
+                    }
                 }
             }
         };
+
+        // Start foreground notification
+        createNotificationChannel();
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Location Service Active")
+                .setContentText("Your location is being tracked")
+                .setSmallIcon(R.drawable.excavator2) // Add your icon here
+                .setContentIntent(pendingIntent)
+                .build();
+
+        startForeground(1, notification);
+
+
+        // Start location updates
+        startLocationUpdates(locationRequest);
+    }
+
+    // Start location updates
+    private void startLocationUpdates(LocationRequest locationRequest) {
+        if (fusedLocationClient != null && locationCallback != null) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        }
+    }
+
+    // Stop location updates
+    private void stopLocationUpdates() {
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+    }
+
+    // Update location to Firebase Realtime Database using GeoFire
+    private void updateLocationToGeoFire(Location location) {
+        String userId = "user_id"; // Replace with actual user ID
+        geoFire.setLocation(userId, new GeoLocation(location.getLatitude(), location.getLongitude()),
+                (key, error) -> {
+                    if (error != null) {
+                        Log.e(TAG, "GeoFire location update failed: " + error.getMessage());
+                    } else {
+                        Log.d(TAG, "GeoFire location updated for user: " + userId);
+                    }
+                });
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
-            String action = intent.getAction();
-            if (ACTION_START.equals(action)) {
-                startForegroundService();
-            } else if (ACTION_STOP.equals(action)) {
-                stopForegroundService();
-            }
-        }
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
-    private void startForegroundService() {
-        // Create notification channel and start service as foreground immediately
-        createNotificationChannel();
-        startForeground(1, createNotification());
-
-        // Check for location permissions after starting foreground
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            stopSelf();
-            return;
-        }
-
-        // Start location updates
-        startLocationUpdates();
-    }
-
-    private void stopForegroundService() {
-        locationProviderClient.removeLocationUpdates(locationCallback);
-        stopForeground(true);
-        stopSelf();
-    }
-
-    private void startLocationUpdates() {
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(LOCATION_UPDATE_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-        }
-    }
-
-    private void updateLocationInDatabase(double latitude, double longitude) {
-        if (operatorId != null) {
-            databaseReference.child(operatorId).child("location").child("latitude").setValue(latitude);
-            databaseReference.child(operatorId).child("location").child("longitude").setValue(longitude);
-        }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopLocationUpdates();
     }
 
     @Override
@@ -112,37 +137,23 @@ public class LocationService extends Service {
         return null;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        locationProviderClient.removeLocationUpdates(locationCallback);
-    }
-
-    // Method to create a notification for foreground service
-    private Notification createNotification() {
-        return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Location Service")
-                .setContentText("Tracking location in background")
-                .setSmallIcon(android.R.drawable.ic_menu_mylocation)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .build();
-    }
-
-    // Method to create a notification channel for devices running Android Oreo and above
+    // Create notification channel for Android O and higher
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
+            NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Location Service Channel",
-                    NotificationManager.IMPORTANCE_HIGH
+                    NotificationManager.IMPORTANCE_DEFAULT
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {
-                manager.createNotificationChannel(channel);
+                manager.createNotificationChannel(serviceChannel);
             }
         }
     }
 }
+
+
 
 
 

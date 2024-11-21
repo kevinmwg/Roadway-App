@@ -14,6 +14,8 @@ import android.widget.Switch;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -35,6 +37,7 @@ public class OperatorsregistrationActivity extends AppCompatActivity {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private DatabaseReference databaseReference;
+    private GeoFire geoFire;
     private Handler locationHandler;
     private Runnable locationRunnable;
 
@@ -47,8 +50,9 @@ public class OperatorsregistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_operatorsregistration);
 
-        // Initialize Firebase Database reference
+        // Initialize Firebase Database reference and GeoFire
         databaseReference = FirebaseDatabase.getInstance().getReference("operators");
+        geoFire = new GeoFire(databaseReference.child("locations"));
 
         // Initialize Location Provider
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -100,13 +104,11 @@ public class OperatorsregistrationActivity extends AppCompatActivity {
         String serviceType = spinnerServiceType.getSelectedItem() != null ? spinnerServiceType.getSelectedItem().toString() : "";
         boolean isActive = switchActiveStatus.isChecked();
 
-        // Ensure required fields are filled out
         if (operatorName.isEmpty() || contactNumber.isEmpty() || vehicleModel.isEmpty() || licensePlate.isEmpty()) {
             Snackbar.make(findViewById(R.id.btn_register_vehicle), "Please fill out all required fields", Snackbar.LENGTH_SHORT).show();
             return;
         }
 
-        // Create a map to store data
         Map<String, Object> operatorData = new HashMap<>();
         operatorData.put("operatorName", operatorName);
         operatorData.put("contactNumber", contactNumber);
@@ -118,7 +120,6 @@ public class OperatorsregistrationActivity extends AppCompatActivity {
         operatorData.put("serviceType", serviceType);
         operatorData.put("isActive", isActive);
 
-        // Store data in Firebase Realtime Database under unique ID
         if (operatorId != null) {
             databaseReference.child(operatorId).setValue(operatorData)
                     .addOnSuccessListener(aVoid -> Log.d("Firebase", "Data stored successfully"))
@@ -154,10 +155,15 @@ public class OperatorsregistrationActivity extends AppCompatActivity {
 
     private void updateLocationInDatabase(double latitude, double longitude) {
         if (operatorId != null) {
-            databaseReference.child(operatorId).child("location").child("latitude").setValue(latitude);
-            databaseReference.child(operatorId).child("location").child("longitude").setValue(longitude);
+            geoFire.setLocation(operatorId, new GeoLocation(latitude, longitude), (key, error) -> {
+                if (error != null) {
+                    Log.e("GeoFire", "Error saving location: ", error.toException());
+                } else {
+                    Log.d("GeoFire", "Location saved successfully");
+                }
+            });
         } else {
-            Log.e("Firebase", "Operator ID is null, unable to update location");
+            Log.e("GeoFire", "Operator ID is null, unable to update location");
         }
     }
 
@@ -188,5 +194,6 @@ public class OperatorsregistrationActivity extends AppCompatActivity {
         locationHandler.removeCallbacks(locationRunnable);
     }
 }
+
 
 

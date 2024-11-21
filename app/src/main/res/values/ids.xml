@@ -5,4 +5,8 @@
     <item name="navigation_dashboard" type="id" />
     <item name="navigation_notifications" type="id" />
     <item name="nav_home" type="id" />
+    <item name="marker_title" type="id">marker_tittle</item>
+    <item name="marker_snippet" type="id">marker_snippet</item>
+    <item name="marker_icon" type="id">marker_icon</item>
+    <item name="custom_marker_view" type="id">custom_marker</item>
 </resources>

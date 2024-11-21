@@ -47,6 +47,10 @@ dependencies {
     implementation ("androidx.cardview:cardview:1.0.0")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
     implementation ("com.google.android.material:material:1.10.0") // or latest version
+    implementation ("com.firebase:geofire-android:3.1.0") // Check the latest version
+    implementation ("com.google.maps.android:android-maps-utils:3.4.0")
+
+
 
 
 }
