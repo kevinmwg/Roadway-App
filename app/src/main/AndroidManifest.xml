@@ -33,6 +33,7 @@
             android:exported="false" />
 
 
+        <!--ADDED BY MESHACK-->
         <activity
             android:name=".Maps_Activity"
             android:exported="true">
