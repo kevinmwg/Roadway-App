@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_map"
+        android:icon="@drawable/baseline_assistant_navigation_24"
+        android:title="Map" />
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/baseline_category_24"
+        android:title="Dashboard" />
+    <item
+        android:id="@+id/nav_services"
+        android:icon="@drawable/baseline_card_travel_24"
+        android:title="Services" />
+</menu>

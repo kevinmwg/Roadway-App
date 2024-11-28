@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Radial Gradient Background -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="250dp"
+                android:centerX="50%"
+                android:centerY="50%"
+                android:startColor="#FF5722"/>   <!-- Vibrant Orange -->
+            android:centerColor="#191414" <!-- Dark Black -->
+            android:endColor="#121212"    <!-- Subtle Dark Gray -->
+            android:angle="0" />
+            <corners android:radius="16dp" /> <!-- Rounded corners -->
+        </shape>
+    </item>
+
+    <!-- Border Outline -->
+    <item android:left="1dp" android:right="1dp" android:top="1dp" android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#00000000" /> <!-- Transparent background -->
+            <stroke
+                android:width="2dp"
+                android:color="#FF5722" /> <!-- Vibrant Orange border -->
+            <corners android:radius="16dp" /> <!-- Match rounded corners -->
+        </shape>
+    </item>
+
+</layer-list>
+
+

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Roadway2</string>
+    <string name="marker_icon_desc" translatable="false">Marker Icon</string>
+</resources>
